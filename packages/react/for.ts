@@ -7,23 +7,23 @@ import { REGISTRY } from './block';
 import { renderReactScope } from './utils';
 import { RENDER_SCOPE } from './constants';
 import type { Props } from '../million';
-import type { FC, ReactNode, MutableRefObject } from 'react';
+import type { ReactNode, MutableRefObject } from 'react';
 
-interface MillionArrayProps {
-  each: any[];
-  children: (value: any, i: number) => ReactNode;
+interface MillionArrayProps<T> {
+  each: T[];
+  children: (value: T, i: number) => ReactNode;
 }
 
-interface ArrayCache {
-  each: any[] | null;
-  children: any[] | null;
+interface ArrayCache<T> {
+  each: T[] | null;
+  children: ReactNode[] | null;
   block?: ReturnType<typeof createBlock>;
 }
 
-const MillionArray: FC<MillionArrayProps> = ({ each, children }) => {
+const MillionArray = <T>({ each, children }: MillionArrayProps<T>) => {
   const ref = useRef<HTMLElement>(null);
   const fragmentRef = useRef<ReturnType<typeof mapArray> | null>(null);
-  const cache = useRef<ArrayCache>({
+  const cache = useRef<ArrayCache<T>>({
     each: null,
     children: null,
   });
@@ -49,10 +49,10 @@ export const For = memo(MillionArray, (oldProps, newProps) =>
   Object.is(newProps.each, oldProps.each),
 );
 
-const createChildren = (
-  each: any[],
+const createChildren = <T>(
+  each: T[],
   getComponent: any,
-  cache: MutableRefObject<ArrayCache>,
+  cache: MutableRefObject<ArrayCache<T>>,
 ) => {
   const children = Array(each.length);
   const currentCache = cache.current;
